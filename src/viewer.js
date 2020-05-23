@@ -229,12 +229,9 @@ export class Viewer {
 
       const blobURLs = [];
       console.log('!!!!url', url);
-     // http://localhost:3000/82fdebdb-0ccc-4bd4-9ef8-5c4ce27b5456 
      const testURL = 'http://localhost:3000/assets/motion-hand.glb';
 
       loader.load(testURL, (gltf) => {
-      // loader.load(url, (gltf) => {
-
         const scene = gltf.scene || gltf.scenes[0];
         const clips = gltf.animations || [];
 
@@ -248,7 +245,7 @@ export class Viewer {
 
         this.setContent(scene, clips);
 
-        blobURLs.forEach(URL.revokeObjectURL);
+        // blobURLs.forEach(URL.revokeObjectURL);
 
         // See: https://github.com/google/draco/issues/349
         // DRACOLoader.releaseDecoderModule();
@@ -259,6 +256,36 @@ export class Viewer {
 
     });
 
+  }
+
+  loadFromUrl ( url ) {
+    const manager = new LoadingManager();
+
+    const loader = new GLTFLoader(manager);
+    loader.setCrossOrigin('anonymous');
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath( 'assets/draco/' );
+    loader.setDRACOLoader( dracoLoader );
+
+    return new Promise((resolve, reject) => {
+      loader.load(url, gltf => {
+        const scene = gltf.scene || gltf.scenes[0];
+        const clips = gltf.animations || [];
+
+        if (!scene) {
+          // Valid, but not supported by this viewer.
+          throw new Error(
+            'This model contains no scene, and cannot be viewed here. However,'
+              + ' it may contain individual 3D resources.'
+              );
+        }
+
+        this.setContent(scene, clips);
+
+        resolve(gltf);
+      }, undefined, reject);
+    });
   }
 
   /**

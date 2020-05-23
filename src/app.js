@@ -116,8 +116,10 @@ class App {
       if (typeof rootFile === 'object') URL.revokeObjectURL(fileURL);
     };
 
+    const url = 'http://localhost:3000/assets/motion-hand.glb';
     viewer
-      .load(fileURL, rootPath, fileMap)
+      .loadFromUrl(url)
+      // .load(fileURL, rootPath, fileMap)
       .catch((e) => this.onError(e))
       .then((gltf) => {
         if (!this.options.kiosk) {
@@ -153,7 +155,6 @@ class App {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-
   const app = new App(document.body, location);
 
 });
