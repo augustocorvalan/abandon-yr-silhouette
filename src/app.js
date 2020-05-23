@@ -101,30 +101,19 @@ class App {
    * @param  {string} rootPath
    * @param  {Map<string, File>} fileMap
    */
-  view (rootFile, rootPath, fileMap) {
-
+  view (url) {
     if (this.viewer) this.viewer.clear();
 
     const viewer = this.viewer || this.createViewer();
 
-    const fileURL = typeof rootFile === 'string'
-      ? rootFile
-      : URL.createObjectURL(rootFile);
-
     const cleanup = () => {
       this.hideSpinner();
-      if (typeof rootFile === 'object') URL.revokeObjectURL(fileURL);
     };
 
-    const url = 'http://localhost:3000/assets/motion-hand.glb';
     viewer
       .loadFromUrl(url)
-      // .load(fileURL, rootPath, fileMap)
       .catch((e) => this.onError(e))
       .then((gltf) => {
-        if (!this.options.kiosk) {
-          this.validationCtrl.validate(fileURL, rootPath, fileMap, gltf);
-        }
         cleanup();
       });
   }
@@ -156,5 +145,11 @@ class App {
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App(document.body, location);
+  const baseUrl = 'http://localhost:3000/assets/';
+  const urls = [
+    'motion-hand.glb'
+  ];
+  const fullUrl = baseUrl + urls[0]
+  app.view(fullUrl);
 
 });
