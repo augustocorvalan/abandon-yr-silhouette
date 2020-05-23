@@ -197,26 +197,28 @@ export class Viewer {
 
       const manager = new LoadingManager();
 
-      // Intercept and override relative URLs.
-      manager.setURLModifier((url, path) => {
+      if (rootPath) {
+        // Intercept and override relative URLs.
+        manager.setURLModifier((url, path) => {
 
-        // URIs in a glTF file may be escaped, or not. Assume that assetMap is
-        // from an un-escaped source, and decode all URIs before lookups.
-        // See: https://github.com/donmccurdy/three-gltf-viewer/issues/146
-        const normalizedURL = rootPath + decodeURI(url)
-          .replace(baseURL, '')
-          .replace(/^(\.?\/)/, '');
+          // URIs in a glTF file may be escaped, or not. Assume that assetMap is
+          // from an un-escaped source, and decode all URIs before lookups.
+          // See: https://github.com/donmccurdy/three-gltf-viewer/issues/146
+          const normalizedURL = rootPath + decodeURI(url)
+            .replace(baseURL, '')
+            .replace(/^(\.?\/)/, '');
 
-        if (assetMap.has(normalizedURL)) {
-          const blob = assetMap.get(normalizedURL);
-          const blobURL = URL.createObjectURL(blob);
-          blobURLs.push(blobURL);
-          return blobURL;
-        }
+          if (assetMap.has(normalizedURL)) {
+            const blob = assetMap.get(normalizedURL);
+            const blobURL = URL.createObjectURL(blob);
+            blobURLs.push(blobURL);
+            return blobURL;
+          }
 
-        return (path || '') + url;
+          return (path || '') + url;
 
-      });
+        });
+      }
 
       const loader = new GLTFLoader(manager);
       loader.setCrossOrigin('anonymous');
@@ -226,8 +228,12 @@ export class Viewer {
       loader.setDRACOLoader( dracoLoader );
 
       const blobURLs = [];
+      console.log('!!!!url', url);
+     // http://localhost:3000/82fdebdb-0ccc-4bd4-9ef8-5c4ce27b5456 
+     const testURL = 'http://localhost:3000/assets/motion-hand.glb';
 
-      loader.load(url, (gltf) => {
+      loader.load(testURL, (gltf) => {
+      // loader.load(url, (gltf) => {
 
         const scene = gltf.scene || gltf.scenes[0];
         const clips = gltf.animations || [];
