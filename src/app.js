@@ -147,9 +147,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const app = new App(document.body, location);
   const baseUrl = 'http://localhost:3000/assets/';
   const urls = [
-    'motion-hand.glb'
+    'standing-hand.glb',
+    'motion-hand.glb',
   ];
-  const fullUrl = baseUrl + urls[0]
-  app.view(fullUrl);
+  // const fullUrl = baseUrl + urls[0]
+  // app.view(fullUrl);
+
+  let index = 0;
+  setInterval(() => {
+    const fullUrl = baseUrl + urls[index % urls.length];
+    app.view(fullUrl);
+    index++;
+    console.log('render', index)
+  }, 5500);
 
 });
