@@ -4,9 +4,7 @@ import { SimpleDropzone } from 'simple-dropzone';
 import { ValidationController } from './validation-controller.js';
 import queryString from 'query-string';
 
-if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-  console.error('The File APIs are not fully supported in this browser.');
-} else if (!WEBGL.isWebGLAvailable()) {
+if (!WEBGL.isWebGLAvailable()) {
   console.error('WebGL is not supported in this browser.');
 }
 
@@ -36,7 +34,6 @@ class App {
     this.inputEl = el.querySelector('#file-input');
     this.validationCtrl = new ValidationController(el);
 
-    this.createDropzone();
     this.hideSpinner();
 
     const options = this.options;
@@ -49,16 +46,6 @@ class App {
     if (options.model) {
       this.view(options.model, '', new Map());
     }
-  }
-
-  /**
-   * Sets up the drag-and-drop controller.
-   */
-  createDropzone () {
-    const dropCtrl = new SimpleDropzone(this.dropEl, this.inputEl);
-    dropCtrl.on('drop', ({files}) => this.load(files));
-    dropCtrl.on('dropstart', () => this.showSpinner());
-    dropCtrl.on('droperror', () => this.hideSpinner());
   }
 
   /**
@@ -145,20 +132,35 @@ class App {
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App(document.body, location);
+
+  changeAppView(app);
+  setInterval(() => {
+    changeAppView(app);
+  }, 6000);
+
+  // document.addEventListener('click', () => {
+  //   changeAppView(app);
+  // });
+});
+
+
+let index = 0;
+function changeAppView(app) {
   const baseUrl = 'http://localhost:3000/assets/';
   const urls = [
     'standing-hand.glb',
     'motion-hand.glb',
+    'head-hand-1.glb',
+    'head-hand-2.glb',
+    'head-hand-4.glb',
+    'head-hand-5.glb',
+    'many-hands-1.glb',
   ];
-  // const fullUrl = baseUrl + urls[0]
-  // app.view(fullUrl);
-
-  let index = 0;
-  setInterval(() => {
+  function changeView(index) {
     const fullUrl = baseUrl + urls[index % urls.length];
     app.view(fullUrl);
-    index++;
-    console.log('render', index)
-  }, 5500);
+  }
 
-});
+  changeView(index);
+  index++;
+}

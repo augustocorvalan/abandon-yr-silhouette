@@ -38,6 +38,8 @@
     "glsl-film-grain": "^1.0.4",
     "gltf-validator": "^2.0.0-dev.3.2",
     "handlebars": "^4.7.6",
+    "lodash.range": "^3.2.0",
+    "lodash.samplesize": "^4.2.0",
     "open": "6.0.0",
     "query-string": "^4.3.4",
     "simple-dropzone": "^0.7.1",

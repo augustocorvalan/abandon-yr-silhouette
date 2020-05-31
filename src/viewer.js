@@ -32,6 +32,8 @@ import { GUI } from 'dat.gui';
 
 import { environments } from '../assets/environment/index.js';
 import { createBackground } from '../lib/three-vignette.js';
+import sampleSize from 'lodash.samplesize';
+import range from 'lodash.range';
 
 const DEFAULT_CAMERA = '[default]';
 
@@ -85,8 +87,8 @@ export class Viewer {
       ambientIntensity: 0.3,
       ambientColor: 0xFFFFFF,
       directIntensity: 0.8 * Math.PI, // TODO(#116)
-      directColor: 0xFFFFFF,
-      bgColor1: '#ffffff',
+      directColor: 0xb400ed,
+      bgColor1: '#17155e',
       bgColor2: '#353535'
     };
 
@@ -116,7 +118,7 @@ export class Viewer {
     this.pmremGenerator.compileEquirectangularShader();
 
     this.controls = new OrbitControls( this.defaultCamera, this.renderer.domElement );
-    this.controls.autoRotate = false;
+    this.controls.autoRotate = true;
     this.controls.autoRotateSpeed = -10;
     this.controls.screenSpacePanning = true;
 
@@ -188,6 +190,7 @@ export class Viewer {
     this.axesRenderer.setSize(this.axesDiv.clientWidth, this.axesDiv.clientHeight);
   }
 
+  /* DEPRECATED */
   load ( url, rootPath, assetMap ) {
 
     const baseURL = LoaderUtils.extractUrlBase(url);
@@ -300,11 +303,13 @@ export class Viewer {
     const size = box.getSize(new Vector3()).length();
     const center = box.getCenter(new Vector3());
 
+
     this.controls.reset();
 
     object.position.x += (object.position.x - center.x);
     object.position.y += (object.position.y - center.y);
     object.position.z += (object.position.z - center.z);
+
     this.controls.maxDistance = size * 10;
     this.defaultCamera.near = size / 100;
     this.defaultCamera.far = size * 100;
@@ -316,6 +321,7 @@ export class Viewer {
       this.defaultCamera.lookAt( new Vector3() );
 
     } else {
+      const rot = sampleSize(range(0.09, 0.2, 0.01))[0];
 
       this.defaultCamera.position.copy(center);
       this.defaultCamera.position.x += size / 2.0;
